@@ -3,6 +3,9 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+	LaTeX-insert-left-brace
+	TeX-insert-backslash
+	indent-for-tab-command
 	))
 
 (setq mc/cmds-to-run-once

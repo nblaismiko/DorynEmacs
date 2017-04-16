@@ -1,42 +1,60 @@
-((("end" .
-   [1 0 0])
-  ("mc/mark-all-like-this" .
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0])
-  ("mc/mark-previous-like-this" .
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0])
-  ("mc/mark-next-like-this" .
-   [0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0])
-  ("mc/edit-lines" .
-   [0 0 0 0 0 0 1 0 0 0 0 0 0])
-  ("kbd" .
-   [1 0 0])
-  ("global-set-key" .
-   [0 0 0 0 0 0 0 0 0 0 1 0 0 0])
-  ("multiple-cursors" .
-   [0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0])
-  ("require" .
+((("replace-currentline-with-yank" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("yank" .
+   [1 0 0 0])
+  ("newline" .
    [1 0 0 0 0 0 0])
-  ("rev" .
-   [0 0 1])
-  ("revert-buffer-no-confirm" .
-   [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
-  ("magit-branch" .
-   [0 0 0 0 0 1 0 0 0 0 0 0])
-  ("powerline-default-theme" .
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0])
-  ("material" .
-   [0 0 0 0 1 0 0 0])
-  ("monokai-theme" .
-   [0 0 0 0 0 0 0 0 0 1 0 0 0])
-  ("monokai" .
+  ("defun" .
+   [1 0 0 0 0])
+  ("delete-current-line" .
+   [1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0])
+  ("auto-indent-on-visit-file" .
+   [0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("auto-complete-mode" .
+   [0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("previous-buffer" .
+   [0 0 0 0 0 0 0 0 0 1 0 0 0 0 0])
+  ("number" .
+   [1 0 0 0 0 0])
+  ("Magit" .
+   [0 0 0 0 1])
+  ("compile" .
    [1 0 0 0 0 0 0])
   ("powerline-center-theme" .
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0])
-  ("compile" .
+  ("monokai" .
    [1 0 0 0 0 0 0])
-  ("Magit" .
-   [0 0 0 0 1])
-  ("number" .
-   [1 0 0 0 0 0])
-  ("previous-buffer" .
-   [0 0 0 0 0 0 0 0 0 1 0 0 0 0 0])))
+  ("monokai-theme" .
+   [0 0 0 0 0 0 0 0 0 1 0 0 0])
+  ("material" .
+   [0 0 0 0 1 0 0 0])
+  ("powerline-default-theme" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0])
+  ("magit-branch" .
+   [0 0 0 0 0 1 0 0 0 0 0 0])
+  ("revert-buffer-no-confirm" .
+   [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("rev" .
+   [0 0 1])
+  ("require" .
+   [1 0 0 0 0 0 0])
+  ("multiple-cursors" .
+   [0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0])
+  ("global-set-key" .
+   [0 0 0 0 0 0 0 0 0 0 1 0 0 0])
+  ("kbd" .
+   [1 0 0])
+  ("mc/edit-lines" .
+   [0 0 0 0 0 0 1 0 0 0 0 0 0])
+  ("mc/mark-next-like-this" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0])
+  ("mc/mark-previous-like-this" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0])
+  ("mc/mark-all-like-this" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0])
+  ("end" .
+   [1 0 0])
+  ("AUCTeX" .
+   [0 0 0 0 0 1])
+  ("interactive" .
+   [0 0 0 0 0 0 0 1 0 0 0])))

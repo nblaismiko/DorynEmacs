@@ -6,6 +6,8 @@
 (defvar super-emacs--required-packages
   '(helm
     magit
+    auctex
+    auctex-latexmk
     multiple-cursors
     ace-jump-mode
     powerline

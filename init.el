@@ -8,6 +8,7 @@
 (load-file "~/.emacs.d/super-emacs/interface.el")
 (load-file "~/.emacs.d/super-emacs/misc.el")
 (load-file "~/.emacs.d/super-emacs/key-bindings.el")
+(load-file "~/.emacs.d/super-emacs/latex-configurations.el")
 
 ;Print welcome message
 (princ (cl-concatenate 'string

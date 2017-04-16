@@ -53,8 +53,7 @@ of FILE in the current directory, suitable for creation"
 ; Enable line numbers
 (global-linum-mode t)
 
-
-
+; Function you can call to move a line by N lines
 (defun move-line (n)
   "Move the current line up or down by N lines."
   (interactive "p")
@@ -68,20 +67,47 @@ of FILE in the current directory, suitable for creation"
     (forward-line -1)
     (forward-char col)))
 
+; Function to move a line up
 (defun move-line-up (n)
   "Move the current line up by N lines."
   (interactive "p")
   (move-line (if (null n) -1 (- n))))
 
+; Function to move a line down
 (defun move-line-down (n)
   "Move the current line down by N lines."
   (interactive "p")
   (move-line (if (null n) 1 n)))
 
+; Function to select the current line.
 (defun select-current-line ()
   "Select the current line"
   (interactive)
   (end-of-line) ; move to end of line
   (set-mark (line-beginning-position)))
 
+; Auto-indent stuff
+(setq c-default-style "linux"
+      c-basic-offset 4)
+(setq auto-indent-on-visit-file t) ;; If you want auto-indent on for files
+(require 'auto-indent-mode)
+(auto-indent-global-mode)
+(add-hook 'c-mode-hook 'auto-indent-mode)
+(setq auto-indent-indent-style 'conservative)
 
+;function to DELETE current line
+(defun delete-current-line ()
+  "Delete (not kill) the current line."
+  (interactive)
+  (save-excursion
+    (delete-region
+     (progn (forward-visible-line 0) (point))
+     (progn (forward-visible-line 1) (point)))))
+
+
+(defun replace-currentline-with-yank ()
+					;delete current line
+  (interactive)
+  (delete-current-line)
+  (yank)
+  (newline))
