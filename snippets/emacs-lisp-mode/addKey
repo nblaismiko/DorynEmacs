@@ -1,0 +1,5 @@
+# -*- mode: emacs-lisp-mode -*-
+# name: MY-add-lisp-keybind-inline
+# key: /k
+# --
+("$1" . $2)
