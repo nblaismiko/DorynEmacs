@@ -6,6 +6,7 @@
 	LaTeX-insert-left-brace
 	TeX-insert-backslash
 	indent-for-tab-command
+	undo-tree-visualize
 	))
 
 (setq mc/cmds-to-run-once

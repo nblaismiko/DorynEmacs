@@ -5,9 +5,13 @@
 ;Declare a list of required packages
 (defvar super-emacs--required-packages
   '(helm
+    use-package
     magit
     auctex
     auctex-latexmk
+    yasnippet
+    helm-c-yasnippet
+    auto-indent-mode
     multiple-cursors
     ace-jump-mode
     powerline
@@ -70,8 +74,15 @@
  '(("t" "Change color theme" theme-looper-enable-next-theme)
    ("r" "Reload file" super-emacs-reload-current-file)))
 
-;Set up helm-mode
+;; Set up helm-mode
 (helm-mode 1)
 (helm-autoresize-mode 1)
 (setq helm-split-window-in-side-p
       t)
+
+;; Yasnippet mode
+(use-package yasnippet
+	     :ensure t
+	     :init
+	     (progn
+	       (yas-global-mode 1)) )
