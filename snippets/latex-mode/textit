@@ -1,0 +1,5 @@
+# -*- mode: LaTeX-mode -*-
+# name: textit
+# key: tit
+# --
+\textit{$1} $2

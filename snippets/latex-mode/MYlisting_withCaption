@@ -1,0 +1,12 @@
+# -*- mode: LaTeX-mode -*-
+# name: MYlisting_withCaption
+# key: listw
+# --
+\begin{minipage}{0.95\textwidth}
+  \begin{mdframed}[backgroundcolor=backcolour,leftmargin=0.2cm,skipabove=0cm,hidealllines=true,%
+    innerleftmargin=-0.0cm,innerrightmargin=0.2cm,innertopmargin=-0.2cm,innerbottommargin=-0.9cm]
+    \begin{lstlisting}[firstnumber=$1, caption={$2}, label=code:$3]
+$4
+end\end{lstlisting}
+  \end{mdframed}
+\end{minipage}
