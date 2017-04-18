@@ -1,0 +1,7 @@
+# -*- mode: org-mode -*-
+# name: MYLispSrc
+# key: lisp
+# --
+#+BEGIN_SRC emacs-lisp
+$1
+#+END_SRC

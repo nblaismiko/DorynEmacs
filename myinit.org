@@ -1,0 +1,82 @@
+#+TITLE: A half decent emacs configuration 
+#+OPTIONS: toc:nil
+
+This org file contains the configuration emacs-lisp code for my holy emacs editor.
+
+* Packages
+
+The packages that this configuration uses are the following :
+
+- asd
+- asd2
+
+
+
+
+#+Begin_SRC emacs-lisp
+  (when (not package-archive-contents)
+    (package-refresh-contents))
+  (defvar required-packages
+    '(use-package
+       helm
+       org
+       use-package
+       magit
+       auctex
+       auctex-latexmk
+       yasnippet
+       helm-c-yasnippet
+       auto-indent-mode
+       multiple-cursors
+       ace-jump-mode
+       powerline
+       switch-window
+       buffer-move
+       auto-complete
+       ztree
+       undo-tree
+       neotree
+       material-theme
+       monokai-theme
+       dired-launch
+       which-key
+       meta-presenter
+       myterminal-controls
+       theme-looper))
+  (mapc (lambda (p)
+          (package-install p))
+        required-packages)
+#+END_SRC
+
+ 
+* Interface
+
+By default, the monokai theme is used.
+
+#+BEGIN_SRC emacs-lisp
+(setq frame-title-format
+      "emacs")
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(load-theme 'monokai
+            t)
+(custom-set-faces
+ '(default ((t (:height 120)))))
+#+END_SRC
+
+
+
+* Keybindings
+ 
+asd
+
+
+
+
+
+* Misc
+
+#+BEGIN_SRC emacs-lisp
+  (fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC

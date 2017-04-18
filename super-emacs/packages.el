@@ -1,38 +1,3 @@
-;Create repositories cache, if required
-(when (not package-archive-contents)
-  (package-refresh-contents))
-
-;Declare a list of required packages
-(defvar super-emacs--required-packages
-  '(helm
-    use-package
-    magit
-    auctex
-    auctex-latexmk
-    yasnippet
-    helm-c-yasnippet
-    auto-indent-mode
-    multiple-cursors
-    ace-jump-mode
-    powerline
-    switch-window
-    buffer-move
-    auto-complete
-    ztree
-    undo-tree
-    neotree
-    material-theme
-    monokai-theme
-    dired-launch
-    which-key
-    meta-presenter
-    myterminal-controls
-    theme-looper))
-
-;Install required packages
-(mapc (lambda (p)
-        (package-install p))
-      super-emacs--required-packages)
 
 ;Load default auto-complete configs
 (ac-config-default)
@@ -44,10 +9,10 @@
 (add-hook 'dired-mode-hook
           'dired-launch-mode)
 
-;Start which-key-mode
+;;Start which-key-mode
 (which-key-mode)
 
-;Set up ace-jump-mode
+;;Set up ace-jump-mode
 (autoload 'ace-jump-mode 
   "ace-jump-mode" 
   "Emacs quick move minor mode"
@@ -66,7 +31,8 @@
 (theme-looper-set-theme-set '(deeper-blue
                               wheatgrass
                               wombat
-                              material))
+                              material
+			      monokai))
 (theme-looper-set-customizations 'powerline-reset)
 
 ;Configure myterminal-controls
