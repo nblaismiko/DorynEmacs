@@ -10,7 +10,7 @@ The packages that this configuration uses are the following :
 - asd
 - asd2
 
-
+** Package installation
 
 
 #+Begin_SRC emacs-lisp
@@ -48,6 +48,52 @@ The packages that this configuration uses are the following :
         required-packages)
 #+END_SRC
 
+
+
+** Basic package initialisation
+
+#+BEGIN_SRC emacs-lisp
+  (ac-config-default)
+  (global-undo-tree-mode)
+  (add-hook 'dired-mode-hook
+            'dired-launch-mode)
+  (which-key-mode)
+
+  (autoload 'ace-jump-mode 
+    "ace-jump-mode" 
+    "Emacs quick move minor mode"
+    t)
+  (autoload 'ace-jump-mode-pop-mark 
+    "ace-jump-mode" 
+    "Ace jump back:-"
+    t)
+
+  (powerline-center-theme)
+
+  (theme-looper-set-theme-set '(deeper-blue
+                                wheatgrass
+                                wombat
+                                material
+                                monokai))
+  (theme-looper-set-customizations 'powerline-reset)
+
+  (myterminal-controls-set-controls-data
+   '(("t" "Change color theme" theme-looper-enable-next-theme)
+     ("r" "Reload file" super-emacs-reload-current-file)))
+
+  (helm-mode 1)
+  (helm-autoresize-mode 1)
+  (setq helm-split-window-in-side-p
+        t)
+
+  (use-package yasnippet
+               :ensure t
+               :init
+               (progn
+                 (yas-global-mode 1)) )
+#+END_SRC
+
+
  
 * Interface
 
@@ -71,12 +117,245 @@ By default, the monokai theme is used.
  
 asd
 
-
+#+BEGIN_SRC emacs-lisp
+  (defvar super-emacs--my-keyboard-bindings 
+    '(("C-S-c" . mc/edit-lines)
+      ("C->" . mc/mark-next-like-this)
+      ("C-<" . mc/mark-previous-like-this)
+      ("C-c C-<" . 'mc/mark-all-like-this)
+      ("C-S-<mouse-1>" . mc/add-cursor-on-click)
+      ("<C-return>" . set-rectangular-region-anchor)
+      ("M-/" . undo-tree-visualize)
+      ("C-\," . neotree-toggle)
+      ("C-o" . delete-current-line)
+      ("C-S-o" . replace-currentline-with-yank)
+      ("C-\"" . theme-looper-enable-next-theme)
+      ("C-M-'" . myterminal-controls-open-controls)
+      ("C-c M-x" . execute-extended-command)
+      ("C-S-l" . select-current-line)
+      ("M-x" . helm-M-x)
+      ("C-x b" . helm-mini)
+      ("C-x C-b" . helm-buffers-list)
+      ("C-x C-f" . helm-find-files)
+      ("C-x C-r" . helm-recentf)
+      ("M-y" . helm-show-kill-ring)
+      ("C-t" . compile)
+      ("<C-tab>" . switch-window)
+      ("C-S-<up>" . enlarge-window)
+      ("C-S-<down>" . shrink-window)
+      ("C-S-<left>" . shrink-window-horizontally)
+      ("C-S-<right>" . enlarge-window-horizontally)
+      ("C-S-a" . beginning-of-defun)
+      ("C-S-e" . end-of-defun)
+      ("<C-backspace>" . delete-word)
+      ("M-d" . delete-word-backwards)
+      ("M-<up>" . move-line-up)
+      ("M-<down>" . move-line-down)
+      ("M--" . previous-buffer)
+      ("<f5>" . revert-buffer-no-confirm)))
+  (defun super-emacs-apply-keyboard-bindings (pair)
+    "Apply keyboard-bindings for supplied list of key-pair values"
+    (global-set-key (kbd (car pair))
+                    (cdr pair)))
+  (mapc 'super-emacs-apply-keyboard-bindings
+        super-emacs--my-keyboard-bindings)
+  (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) 
+  (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
+  (define-key helm-map (kbd "C-z")  'helm-select-action)
+#+END_SRC
 
 
 
 * Misc
 
 #+BEGIN_SRC emacs-lisp
+  (defun super-emacs-reload-current-file ()
+    "Reload the file loaded in current buffer from the disk"
+    (interactive)
+    (cond (buffer-file-name (progn (find-alternate-file buffer-file-name)
+                                   (message "File reloaded")))
+          (t (message "You're not editing a file!"))))
+
+  ;Disable splash message, start *scratch* buffer by default
+  (setq initial-buffer-choice 
+        t)
+  (setq initial-scratch-message 
+        "")
+
+  ;;Enable show-paren-mode
+  (show-paren-mode)
+
+  ;;Enable winner-mode
+  (winner-mode t)
+
+  ;;Enable windmove
+  (windmove-default-keybindings)
+
+  (require 'cl) ; If you don't have it already
+
+  ;; Function to retrieve the nearest file with the specified name (default is Makefile)
+  (defun* get-closest-pathname (&optional (file "Makefile"))
+    "Determine the pathname of the first instance of FILE starting from the current directory towards root.
+  This may not do the correct thing in presence of links. If it does not find FILE, then it shall return the name
+  of FILE in the current directory, suitable for creation"
+    (let ((root (expand-file-name "/"))) ; the win32 builds should translate this correctly
+      (expand-file-name file
+                        (loop 
+                          for d = default-directory then (expand-file-name ".." d)
+                          if (file-exists-p (expand-file-name file d))
+                          return d
+                          if (equal d root)
+                          return nil))))
+
+  ;; Source: http://www.emacswiki.org/emacs-en/download/misc-cmds.el
+  (defun revert-buffer-no-confirm ()
+      "Revert buffer without confirmation."
+      (interactive)
+      (revert-buffer :ignore-auto :noconfirm))
+
+  ; Enable line numbers globally
+  (global-linum-mode t)
+
+  ; Function you can call to move a line by N lines
+  (defun move-line (n)
+    "Move the current line up or down by N lines."
+    (interactive "p")
+    (setq col (current-column))
+    (beginning-of-line) (setq start (point))
+    (end-of-line) (forward-char) (setq end (point))
+    (let ((line-text (delete-and-extract-region start end)))
+      (forward-line n)
+      (insert line-text)
+      ;; restore point to original column in moved line
+      (forward-line -1)
+      (forward-char col)))
+
+  ;; Function to move a line up
+  (defun move-line-up (n)
+    "Move the current line up by N lines."
+    (interactive "p")
+    (move-line (if (null n) -1 (- n))))
+
+  ;; Function to move a line down
+  (defun move-line-down (n)
+    "Move the current line down by N lines."
+    (interactive "p")
+    (move-line (if (null n) 1 n)))
+
+  ;; Function to select the current line.
+  (defun select-current-line ()
+    "Select the current line"
+    (interactive)
+    (end-of-line) ; move to end of line
+    (set-mark (line-beginning-position)))
+
+  ;; Auto-indent stuff
+  (setq c-default-style "linux"
+        c-basic-offset 4)
+  (setq auto-indent-on-visit-file t) ;; If you want auto-indent on for files
+  (require 'auto-indent-mode)
+  (auto-indent-global-mode)
+  (add-hook 'c-mode-hook 'auto-indent-mode)
+  (setq auto-indent-indent-style 'conservative)
+
+  ;;function to DELETE current line
+  (defun delete-current-line ()
+    "Delete (not kill) the current line."
+    (interactive)
+    (save-excursion
+      (delete-region
+       (progn (forward-visible-line 0) (point))
+       (progn (forward-visible-line 1) (point)))))
+
+  ;; Function to replace the content of a line with latest ring buffer
+  (defun replace-currentline-with-yank ()
+    ;;delete current line
+    (interactive)
+    (delete-current-line)
+    (yank)
+    (newline))
+
+  ;; Function to delete a word (NOT KILL FFS)
+  (defun delete-word (arg)
+    "Delete characters backward until encountering the beginning of a word.
+  With argument ARG, do this that many times."
+    (interactive "p")
+    (delete-region (point) (progn (backward-word arg) (point))))
+
+  ;; Function to delete a word (NOT KILL FFS)
+  (defun delete-word-backwards (arg)
+    "Delete characters backward until encountering the beginning of a word.
+  With argument ARG, do this that many times."
+    (interactive "p")
+    (delete-region (point) (progn (forward-word arg) (point))))
+      
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
+
+
+* C-configuration
+
+Configuration spécifique au mode c.
+
+#+BEGIN_SRC emacs-lisp
+  (require 'compile)
+  (add-hook 'c-mode-hook (lambda () (set (make-local-variable 'compile-command) (format "make -C %s" (file-name-directory (get-closest-pathname)) ))))
+#+END_SRC 
+
+
+* LaTeX configuration
+
+LaTeX specific configuration.
+
+#+BEGIN_SRC emacs-lisp
+  ;; Make latexmk the compile command for latex
+  (add-hook 'LaTeX-mode-hook (lambda ()
+                               (push
+                                '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+                                  :help "Run latexmk on file")
+                                TeX-command-list)))
+  ;; Make latexmk the default command when hitting C-c
+  (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))) 
+  ;; Make LaTeX mode ask for master file before compile.
+  (setq-default TeX-master nil)
+  ;; Make LaTeX-mode the default mode when opening .tex files.
+  (add-to-list 'auto-mode-alist '("\\.tex$" . LaTeX-mode))
+
+  ;; Code snippet I copied to have pdf viewer Okular integrated to emacs.
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(TeX-source-correlate-method (quote synctex))
+   '(TeX-source-correlate-mode t)
+   '(TeX-source-correlate-start-server t)
+   '(TeX-view-program-list (quote (("Okular" "okular --unique %o#src:%n%b"))))
+   '(TeX-view-program-selection (quote ((engine-omega "dvips and gv") (output-dvi "xdvi") (output-pdf "Okular") (output-html "xdg-open"))))
+   )
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   )
+#+END_SRC
+
+
+* Post-config
+
+Simple message print
+#+BEGIN_SRC emacs-lisp
+  ;;Print welcome message
+  (princ (cl-concatenate 'string
+                         "Startup completed in "
+                         (number-to-string (cadr (time-subtract (current-time)
+                                                                invokation-time)))
+                         " seconds\n\n"
+                         "Welcome to emacs!\n\n"
+                         "Today's date: "
+                         (format-time-string "%B %d %Y"))
+         (get-buffer-create (current-buffer)))
+#+END_SRC
+
+

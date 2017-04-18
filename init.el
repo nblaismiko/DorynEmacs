@@ -23,21 +23,3 @@
 
 ;; Input my org init file here
 (org-babel-load-file (expand-file-name "~/.emacs.d/myinit.org"))
-
-(load-file "~/.emacs.d/super-emacs/packages.el")
-(load-file "~/.emacs.d/super-emacs/interface.el")
-(load-file "~/.emacs.d/super-emacs/misc.el")
-(load-file "~/.emacs.d/super-emacs/key-bindings.el")
-(load-file "~/.emacs.d/super-emacs/c-configurations.el")
-(load-file "~/.emacs.d/super-emacs/latex-configurations.el")
-
-;;Print welcome message
-(princ (cl-concatenate 'string
-                       "Startup completed in "
-                       (number-to-string (cadr (time-subtract (current-time)
-                                                              invokation-time)))
-                       " seconds\n\n"
-                       "Welcome to emacs!\n\n"
-                       "Today's date: "
-                       (format-time-string "%B %d %Y"))
-       (get-buffer-create (current-buffer)))
