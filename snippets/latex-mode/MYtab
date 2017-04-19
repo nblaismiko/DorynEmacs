@@ -1,0 +1,18 @@
+# -*- mode: LaTeX-mode -*-
+# name: MYsimpleTab
+# key: tab
+# --
+\definecolor{topShape}{rgb}{0.78,0.9,1}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{$1}
+    \rowcolor{topShape}
+    \hline
+$4
+  \end{tabular}
+  
+  \vspace{-0.2cm}
+  
+  \caption{$2}
+  \label{tab:$3}
+\end{table}

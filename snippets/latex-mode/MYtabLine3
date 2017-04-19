@@ -1,0 +1,6 @@
+# -*- mode: LaTeX-mode -*-
+# name: MYtabLine3
+# key: tline3
+# --
+$1  & $2  & $3 \\\\
+\hline
