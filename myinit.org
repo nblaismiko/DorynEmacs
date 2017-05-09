@@ -43,6 +43,7 @@ The packages that this configuration uses are the following :
        meta-presenter
        myterminal-controls
        find-file-in-repository
+       tabbar
        theme-looper))
   (mapc (lambda (p)
           (package-install p))
@@ -92,6 +93,49 @@ The packages that this configuration uses are the following :
                :init
                (progn
                  (yas-global-mode 1)) )
+
+ (require 'tabbar)
+ (tabbar-mode)
+
+  (defun find-git-dir (dir)
+    "Search up the directory tree looking for a .git folder."
+    (cond
+     ((eq major-mode 'dired-mode) "Dired")
+     ((not dir) "process")
+     ((string= dir "/") "no-git")
+     ((file-exists-p (concat dir "/.git")) dir)
+     (t (find-git-dir (directory-file-name (file-name-directory dir))))))
+
+  (defun git-tabbar-buffer-groups ()
+    "Groups tabs in tabbar-mode by the git repository they are in."
+    (list (find-git-dir (buffer-file-name (current-buffer)))))
+  (setq tabbar-buffer-groups-function 'git-tabbar-buffer-groups)
+
+
+  ;; Add a buffer modification state indicator in the tab label, and place a
+  ;; space around the label to make it looks less crowd.
+  (defadvice tabbar-buffer-tab-label (after fixup_tab_label_space_and_flag activate)
+    (setq ad-return-value
+          (if (and (buffer-modified-p (tabbar-tab-value tab))
+                   (buffer-file-name (tabbar-tab-value tab)))
+              (concat " + " (concat ad-return-value " "))
+            (concat " " (concat ad-return-value " ")))))
+
+  ;; Called each time the modification state of the buffer changed.
+  (defun ztl-modification-state-change ()
+    (tabbar-set-template tabbar-current-tabset nil)
+    (tabbar-display-update))
+
+  ;; First-change-hook is called BEFORE the change is made.
+  (defun ztl-on-buffer-modification ()
+    (set-buffer-modified-p t)
+    (ztl-modification-state-change))
+  (add-hook 'after-save-hook 'ztl-modification-state-change)
+
+  ;; This doesn't work for revert, I don't know.
+  ;;(add-hook 'after-revert-hook 'ztl-modification-state-change)
+  (add-hook 'first-change-hook 'ztl-on-buffer-modification)
+
 #+END_SRC
 
 
@@ -149,6 +193,8 @@ asd
       ("C-S-a" . beginning-of-defun)
       ("C-S-e" . end-of-defun)
       ("C-p" . find-file-in-repository)
+      ("M-<left>" . tabbar-backward-tab)
+      ("M-<right>" . tabbar-forward-tab)
       ("<C-backspace>" . delete-word)
       ("M-d" . delete-word-backwards)
       ("M-<up>" . move-line-up)
