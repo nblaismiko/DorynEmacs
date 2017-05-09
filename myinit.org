@@ -42,6 +42,7 @@ The packages that this configuration uses are the following :
        which-key
        meta-presenter
        myterminal-controls
+       find-file-in-repository
        theme-looper))
   (mapc (lambda (p)
           (package-install p))
@@ -147,6 +148,7 @@ asd
       ("C-S-<right>" . enlarge-window-horizontally)
       ("C-S-a" . beginning-of-defun)
       ("C-S-e" . end-of-defun)
+      ("C-p" . find-file-in-repository)
       ("<C-backspace>" . delete-word)
       ("M-d" . delete-word-backwards)
       ("M-<up>" . move-line-up)
