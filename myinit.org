@@ -336,8 +336,17 @@ asd
   With argument ARG, do this that many times."
     (interactive "p")
     (delete-region (point) (progn (forward-word arg) (point))))
-      
+
+  ;; I dont want to type yes or not but always y-or-n
   (fset 'yes-or-no-p 'y-or-n-p)
+
+
+  (defun kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+    (mapc 'kill-buffer 
+          (delq (current-buffer) 
+                (remove-if-not 'buffer-file-name (buffer-list)))))
 #+END_SRC
 
 
@@ -387,6 +396,19 @@ LaTeX specific configuration.
    ;; Your init file should contain only one such instance.
    ;; If there is more than one, they won't work right.
    )
+#+END_SRC
+
+
+* Org-mode configuration
+
+#+BEGIN_SRC emacs-lisp
+  ;; Fix for line wrapping in org-mode
+  (setq org-startup-truncated nil)
+
+  ;; Org-mode todo sequence
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "OPEN(o)" "CONFIRMED(c@/!)" "HOLD(h@/!)" "RESOLVED(r@/!)" "CANCELED(a!)")))
+
 #+END_SRC
 
 
