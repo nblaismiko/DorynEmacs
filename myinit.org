@@ -33,6 +33,7 @@ The packages that this configuration uses are the following :
        switch-window
        buffer-move
        auto-complete
+       smart-tabs-mode
        ztree
        undo-tree
        neotree
@@ -55,86 +56,89 @@ The packages that this configuration uses are the following :
 ** Basic package initialisation
 
 #+BEGIN_SRC emacs-lisp
-  (ac-config-default)
-  (global-undo-tree-mode)
-  (add-hook 'dired-mode-hook
-            'dired-launch-mode)
-  (which-key-mode)
+   (ac-config-default)
+   (global-undo-tree-mode)
+   (add-hook 'dired-mode-hook
+             'dired-launch-mode)
+   (which-key-mode)
 
-  (autoload 'ace-jump-mode 
-    "ace-jump-mode" 
-    "Emacs quick move minor mode"
-    t)
-  (autoload 'ace-jump-mode-pop-mark 
-    "ace-jump-mode" 
-    "Ace jump back:-"
-    t)
+   (autoload 'ace-jump-mode 
+     "ace-jump-mode" 
+     "Emacs quick move minor mode"
+     t)
+   (autoload 'ace-jump-mode-pop-mark 
+     "ace-jump-mode" 
+     "Ace jump back:-"
+     t)
 
-  (powerline-center-theme)
+   (powerline-center-theme)
 
-  (theme-looper-set-theme-set '(deeper-blue
-                                wheatgrass
-                                wombat
-                                material
-                                monokai))
-  (theme-looper-set-customizations 'powerline-reset)
+   (theme-looper-set-theme-set '(deeper-blue
+                                 wheatgrass
+                                 wombat
+                                 material
+                                 monokai))
+   (theme-looper-set-customizations 'powerline-reset)
 
-  (myterminal-controls-set-controls-data
-   '(("t" "Change color theme" theme-looper-enable-next-theme)
-     ("r" "Reload file" super-emacs-reload-current-file)))
+   (myterminal-controls-set-controls-data
+    '(("t" "Change color theme" theme-looper-enable-next-theme)
+      ("r" "Reload file" super-emacs-reload-current-file)))
 
-  (helm-mode 1)
-  (helm-autoresize-mode 1)
-  (setq helm-split-window-in-side-p
-        t)
+   (helm-mode 1)
+   (helm-autoresize-mode 1)
+   (setq helm-split-window-in-side-p
+         t)
 
-  (use-package yasnippet
-               :ensure t
-               :init
-               (progn
-                 (yas-global-mode 1)) )
+   (use-package yasnippet
+                :ensure t
+                :init
+                (progn
+                  (yas-global-mode 1)) )
 
- (require 'tabbar)
- (tabbar-mode)
+  (require 'tabbar)
+  (tabbar-mode)
 
-  (defun find-git-dir (dir)
-    "Search up the directory tree looking for a .git folder."
-    (cond
-     ((eq major-mode 'dired-mode) "Dired")
-     ((not dir) "process")
-     ((string= dir "/") "no-git")
-     ((file-exists-p (concat dir "/.git")) dir)
-     (t (find-git-dir (directory-file-name (file-name-directory dir))))))
+   (defun find-git-dir (dir)
+     "Search up the directory tree looking for a .git folder."
+     (cond
+      ((eq major-mode 'dired-mode) "Dired")
+      ((not dir) "process")
+      ((string= dir "/") "no-git")
+      ((file-exists-p (concat dir "/.git")) dir)
+      (t (find-git-dir (directory-file-name (file-name-directory dir))))))
 
-  (defun git-tabbar-buffer-groups ()
-    "Groups tabs in tabbar-mode by the git repository they are in."
-    (list (find-git-dir (buffer-file-name (current-buffer)))))
-  (setq tabbar-buffer-groups-function 'git-tabbar-buffer-groups)
+   (defun git-tabbar-buffer-groups ()
+     "Groups tabs in tabbar-mode by the git repository they are in."
+     (list (find-git-dir (buffer-file-name (current-buffer)))))
+   (setq tabbar-buffer-groups-function 'git-tabbar-buffer-groups)
 
 
-  ;; Add a buffer modification state indicator in the tab label, and place a
-  ;; space around the label to make it looks less crowd.
-  (defadvice tabbar-buffer-tab-label (after fixup_tab_label_space_and_flag activate)
-    (setq ad-return-value
-          (if (and (buffer-modified-p (tabbar-tab-value tab))
-                   (buffer-file-name (tabbar-tab-value tab)))
-              (concat " + " (concat ad-return-value " "))
-            (concat " " (concat ad-return-value " ")))))
+   ;; Add a buffer modification state indicator in the tab label, and place a
+   ;; space around the label to make it looks less crowd.
+   (defadvice tabbar-buffer-tab-label (after fixup_tab_label_space_and_flag activate)
+     (setq ad-return-value
+           (if (and (buffer-modified-p (tabbar-tab-value tab))
+                    (buffer-file-name (tabbar-tab-value tab)))
+               (concat " + " (concat ad-return-value " "))
+             (concat " " (concat ad-return-value " ")))))
 
-  ;; Called each time the modification state of the buffer changed.
-  (defun ztl-modification-state-change ()
-    (tabbar-set-template tabbar-current-tabset nil)
-    (tabbar-display-update))
+   ;; Called each time the modification state of the buffer changed.
+   (defun ztl-modification-state-change ()
+     (tabbar-set-template tabbar-current-tabset nil)
+     (tabbar-display-update))
 
-  ;; First-change-hook is called BEFORE the change is made.
-  (defun ztl-on-buffer-modification ()
-    (set-buffer-modified-p t)
-    (ztl-modification-state-change))
-  (add-hook 'after-save-hook 'ztl-modification-state-change)
+   ;; First-change-hook is called BEFORE the change is made.
+   (defun ztl-on-buffer-modification ()
+     (set-buffer-modified-p t)
+     (ztl-modification-state-change))
+   (add-hook 'after-save-hook 'ztl-modification-state-change)
 
-  ;; This doesn't work for revert, I don't know.
-  ;;(add-hook 'after-revert-hook 'ztl-modification-state-change)
-  (add-hook 'first-change-hook 'ztl-on-buffer-modification)
+   ;; This doesn't work for revert, I don't know.
+   ;;(add-hook 'after-revert-hook 'ztl-modification-state-change)
+   (add-hook 'first-change-hook 'ztl-on-buffer-modification)
+
+   ;; smart tabs language configuration
+   (smart-tabs-insinuate 'c 'c++ 'java 'javascript 'cperl 'python 'ruby 'nxml)
 
 #+END_SRC
 
@@ -200,6 +204,7 @@ asd
       ("M-<up>" . move-line-up)
       ("M-<down>" . move-line-down)
       ("M--" . previous-buffer)
+      ("<f6>" . kill-other-buffers)
       ("<f5>" . revert-buffer-no-confirm)))
   (defun super-emacs-apply-keyboard-bindings (pair)
     "Apply keyboard-bindings for supplied list of key-pair values"
@@ -217,136 +222,149 @@ asd
 * Misc
 
 #+BEGIN_SRC emacs-lisp
-  (defun super-emacs-reload-current-file ()
-    "Reload the file loaded in current buffer from the disk"
-    (interactive)
-    (cond (buffer-file-name (progn (find-alternate-file buffer-file-name)
-                                   (message "File reloaded")))
-          (t (message "You're not editing a file!"))))
-
-  ;Disable splash message, start *scratch* buffer by default
-  (setq initial-buffer-choice 
-        t)
-  (setq initial-scratch-message 
-        "")
-
-  ;;Enable show-paren-mode
-  (show-paren-mode)
-
-  ;;Enable winner-mode
-  (winner-mode t)
-
-  ;;Enable windmove
-  (windmove-default-keybindings)
-
-  (require 'cl) ; If you don't have it already
-
-  ;; Function to retrieve the nearest file with the specified name (default is Makefile)
-  (defun* get-closest-pathname (&optional (file "Makefile"))
-    "Determine the pathname of the first instance of FILE starting from the current directory towards root.
-  This may not do the correct thing in presence of links. If it does not find FILE, then it shall return the name
-  of FILE in the current directory, suitable for creation"
-    (let ((root (expand-file-name "/"))) ; the win32 builds should translate this correctly
-      (expand-file-name file
-                        (loop 
-                          for d = default-directory then (expand-file-name ".." d)
-                          if (file-exists-p (expand-file-name file d))
-                          return d
-                          if (equal d root)
-                          return nil))))
-
-  ;; Source: http://www.emacswiki.org/emacs-en/download/misc-cmds.el
-  (defun revert-buffer-no-confirm ()
-      "Revert buffer without confirmation."
+    (defun super-emacs-reload-current-file ()
+      "Reload the file loaded in current buffer from the disk"
       (interactive)
-      (revert-buffer :ignore-auto :noconfirm))
+      (cond (buffer-file-name (progn (find-alternate-file buffer-file-name)
+                                     (message "File reloaded")))
+            (t (message "You're not editing a file!"))))
 
-  ; Enable line numbers globally
-  (global-linum-mode t)
+    ;Disable splash message, start *scratch* buffer by default
+    (setq initial-buffer-choice 
+          t)
+    (setq initial-scratch-message 
+          "")
 
-  ; Function you can call to move a line by N lines
-  (defun move-line (n)
-    "Move the current line up or down by N lines."
-    (interactive "p")
-    (setq col (current-column))
-    (beginning-of-line) (setq start (point))
-    (end-of-line) (forward-char) (setq end (point))
-    (let ((line-text (delete-and-extract-region start end)))
-      (forward-line n)
-      (insert line-text)
-      ;; restore point to original column in moved line
-      (forward-line -1)
-      (forward-char col)))
+    ;;Enable show-paren-mode
+    (show-paren-mode)
 
-  ;; Function to move a line up
-  (defun move-line-up (n)
-    "Move the current line up by N lines."
-    (interactive "p")
-    (move-line (if (null n) -1 (- n))))
+    ;;Enable winner-mode
+    (winner-mode t)
 
-  ;; Function to move a line down
-  (defun move-line-down (n)
-    "Move the current line down by N lines."
-    (interactive "p")
-    (move-line (if (null n) 1 n)))
+    ;;Enable windmove
+    (windmove-default-keybindings)
 
-  ;; Function to select the current line.
-  (defun select-current-line ()
-    "Select the current line"
-    (interactive)
-    (end-of-line) ; move to end of line
-    (set-mark (line-beginning-position)))
+    (require 'cl) ; If you don't have it already
 
-  ;; Auto-indent stuff
-  (setq c-default-style "linux"
+    ;; Function to retrieve the nearest file with the specified name (default is Makefile)
+    (defun* get-closest-pathname (&optional (file "Makefile"))
+      "Determine the pathname of the first instance of FILE starting from the current directory towards root.
+    This may not do the correct thing in presence of links. If it does not find FILE, then it shall return the name
+    of FILE in the current directory, suitable for creation"
+      (let ((root (expand-file-name "/"))) ; the win32 builds should translate this correctly
+        (expand-file-name file
+                          (loop 
+                            for d = default-directory then (expand-file-name ".." d)
+                            if (file-exists-p (expand-file-name file d))
+                            return d
+                            if (equal d root)
+                            return nil))))
+
+    ;; Source: http://www.emacswiki.org/emacs-en/download/misc-cmds.el
+    (defun revert-buffer-no-confirm ()
+        "Revert buffer without confirmation."
+        (interactive)
+        (revert-buffer :ignore-auto :noconfirm))
+
+    ; Enable line numbers globally
+    (global-linum-mode t)
+
+    ; Function you can call to move a line by N lines
+    (defun move-line (n)
+      "Move the current line up or down by N lines."
+      (interactive "p")
+      (setq col (current-column))
+      (beginning-of-line) (setq start (point))
+      (end-of-line) (forward-char) (setq end (point))
+      (let ((line-text (delete-and-extract-region start end)))
+        (forward-line n)
+        (insert line-text)
+        ;; restore point to original column in moved line
+        (forward-line -1)
+        (forward-char col)))
+
+    ;; Function to move a line up
+    (defun move-line-up (n)
+      "Move the current line up by N lines."
+      (interactive "p")
+      (move-line (if (null n) -1 (- n))))
+
+    ;; Function to move a line down
+    (defun move-line-down (n)
+      "Move the current line down by N lines."
+      (interactive "p")
+      (move-line (if (null n) 1 n)))
+
+    ;; Function to select the current line.
+    (defun select-current-line ()
+      "Select the current line"
+      (interactive)
+      (end-of-line) ; move to end of line
+      (set-mark (line-beginning-position)))
+
+    (require 'auto-indent-mode)
+    (auto-indent-global-mode)
+    (add-hook 'c-mode-hook 'auto-indent-mode)
+    (setq auto-indent-indent-style 'conservative)
+    (setq-default c-basic-offset 4)
+    ;; 4 space per fucking offset crap
+  (add-hook 'c-mode-hook '(lambda () (setq c-basic-offset 4)
+                                     (setq tab-width 4))) 
+    ;; Auto-indent stuff
+    ;; if indent-tabs-mode is t, it means it may use tab, resulting mixed space and tab
+    (setq c-default-style "linux"
         c-basic-offset 4)
-  (setq auto-indent-on-visit-file t) ;; If you want auto-indent on for files
-  (require 'auto-indent-mode)
-  (auto-indent-global-mode)
-  (add-hook 'c-mode-hook 'auto-indent-mode)
-  (setq auto-indent-indent-style 'conservative)
+    (setq auto-indent-assign-indent-level 4)
+    (setq tab-width 4) ; or any other preferred value
 
-  ;;function to DELETE current line
-  (defun delete-current-line ()
-    "Delete (not kill) the current line."
-    (interactive)
-    (save-excursion
-      (delete-region
-       (progn (forward-visible-line 0) (point))
-       (progn (forward-visible-line 1) (point)))))
+    ;;function to DELETE current line
+    (defun delete-current-line ()
+      "Delete (not kill) the current line."
+      (interactive)
+      (save-excursion
+        (delete-region
+         (progn (forward-visible-line 0) (point))
+         (progn (forward-visible-line 1) (point)))))
 
-  ;; Function to replace the content of a line with latest ring buffer
-  (defun replace-currentline-with-yank ()
-    ;;delete current line
-    (interactive)
-    (delete-current-line)
-    (yank)
-    (newline))
+    ;; Function to replace the content of a line with latest ring buffer
+    (defun replace-currentline-with-yank ()
+      ;;delete current line
+      (interactive)
+      (delete-current-line)
+      (yank)
+      (newline))
 
-  ;; Function to delete a word (NOT KILL FFS)
-  (defun delete-word (arg)
-    "Delete characters backward until encountering the beginning of a word.
-  With argument ARG, do this that many times."
-    (interactive "p")
-    (delete-region (point) (progn (backward-word arg) (point))))
+    ;; Function to delete a word (NOT KILL FFS)
+    (defun delete-word (arg)
+      "Delete characters backward until encountering the beginning of a word.
+    With argument ARG, do this that many times."
+      (interactive "p")
+      (delete-region (point) (progn (backward-word arg) (point))))
 
-  ;; Function to delete a word (NOT KILL FFS)
-  (defun delete-word-backwards (arg)
-    "Delete characters backward until encountering the beginning of a word.
-  With argument ARG, do this that many times."
-    (interactive "p")
-    (delete-region (point) (progn (forward-word arg) (point))))
+    ;; Function to delete a word (NOT KILL FFS)
+    (defun delete-word-backwards (arg)
+      "Delete characters backward until encountering the beginning of a word.
+    With argument ARG, do this that many times."
+      (interactive "p")
+      (delete-region (point) (progn (forward-word arg) (point))))
 
-  ;; I dont want to type yes or not but always y-or-n
-  (fset 'yes-or-no-p 'y-or-n-p)
+    ;; I dont want to type yes or not but always y-or-n
+    (fset 'yes-or-no-p 'y-or-n-p)
 
 
-  (defun kill-other-buffers ()
-    "Kill all other buffers."
-    (interactive)
-    (mapc 'kill-buffer 
-          (delq (current-buffer) 
-                (remove-if-not 'buffer-file-name (buffer-list)))))
+    (defun kill-other-buffers ()
+      "Kill all other buffers."
+      (interactive)
+      (mapc 'kill-buffer 
+            (delq (current-buffer) 
+                  (remove-if-not 'buffer-file-name (buffer-list)))))
+
+  (defun autopair-insert-opening ()
+      (interactive)
+      ( when (autopair-pair-p)
+          (setq autopair-action (list 'opening (autopair-find-pair) (point))))
+      (autopair-fallback)) 
+
 #+END_SRC
 
 
@@ -407,8 +425,10 @@ LaTeX specific configuration.
 
   ;; Org-mode todo sequence
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "OPEN(o)" "CONFIRMED(c@/!)" "HOLD(h@/!)" "RESOLVED(r@/!)" "CANCELED(a!)")))
+        '((sequence "TODO(t)" "CONFIRMED(c@/!)" "IN-REVIEW(h@/!)" "RESOLVED(r@/!)" "CANCELED(a@/!)"  "VERIFIED(v!)")))
 
+  ;; fontify code in code blocks
+  (setq org-src-fontify-natively t)
 #+END_SRC
 
 
