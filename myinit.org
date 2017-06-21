@@ -194,6 +194,7 @@ asd
       ("C-S-<down>" . shrink-window)
       ("C-S-<left>" . shrink-window-horizontally)
       ("C-S-<right>" . enlarge-window-horizontally)
+      ("C-S-x" . toggle-maximize-buffer)
       ("C-S-a" . beginning-of-defun)
       ("C-S-e" . end-of-defun)
       ("C-p" . find-file-in-repository)
@@ -304,16 +305,20 @@ asd
 
     (require 'auto-indent-mode)
     (auto-indent-global-mode)
-    (add-hook 'c-mode-hook 'auto-indent-mode)
+  (add-hook 'c-mode-hook 'auto-indent-mode)
+  (add-hook 'c++-mode-hook 'auto-indent-mode)
     (setq auto-indent-indent-style 'conservative)
-    (setq-default c-basic-offset 4)
+  (setq-default c-basic-offset 4)
+  (setq-default c++-basic-offset 4)
     ;; 4 space per fucking offset crap
   (add-hook 'c-mode-hook '(lambda () (setq c-basic-offset 4)
-                                     (setq tab-width 4))) 
+                              (setq tab-width 4)))
+  (add-hook 'c++-mode-hook '(lambda () (setq c++-basic-offset 4)
+                              (setq tab-width 4))) 
     ;; Auto-indent stuff
     ;; if indent-tabs-mode is t, it means it may use tab, resulting mixed space and tab
     (setq c-default-style "linux"
-        c-basic-offset 4)
+          c-basic-offset 4)
     (setq auto-indent-assign-indent-level 4)
     (setq tab-width 4) ; or any other preferred value
 
@@ -363,7 +368,20 @@ asd
       (interactive)
       ( when (autopair-pair-p)
           (setq autopair-action (list 'opening (autopair-find-pair) (point))))
-      (autopair-fallback)) 
+      (autopair-fallback))
+
+  (setq grep-command "grep -nrH --include *.c --include *.cpp -e")
+
+  (delete-selection-mode 1)
+
+
+  (defun toggle-maximize-buffer () "Maximize buffer"
+         (interactive)
+         (if (= 1 (length (window-list)))
+                 (jump-to-register '_) 
+             (progn
+                 (window-configuration-to-register '_)
+                 (delete-other-windows))))
 
 #+END_SRC
 
@@ -375,6 +393,14 @@ Configuration spécifique au mode c.
 #+BEGIN_SRC emacs-lisp
   (require 'compile)
   (add-hook 'c-mode-hook (lambda () (set (make-local-variable 'compile-command) (format "make -C %s" (file-name-directory (get-closest-pathname)) ))))
+
+  (setq tags-revert-without-query 1)
+
+  (add-hook 'c-mode-common-hook
+            (lambda() 
+                (local-set-key  (kbd "C-c o") 'ff-find-other-file)))
+
+
 #+END_SRC 
 
 
