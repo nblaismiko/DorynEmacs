@@ -19,6 +19,7 @@ The packages that this configuration uses are the following :
   (defvar required-packages
     '(use-package
        helm
+       helm-gtags
        org
        use-package
        magit
@@ -84,10 +85,32 @@ The packages that this configuration uses are the following :
     '(("t" "Change color theme" theme-looper-enable-next-theme)
       ("r" "Reload file" super-emacs-reload-current-file)))
 
+
+
    (helm-mode 1)
    (helm-autoresize-mode 1)
    (setq helm-split-window-in-side-p
          t)
+
+    (setq helm-gtags-ignore-case t
+          helm-gtags-auto-update t
+          helm-gtags-use-input-at-cursor t
+          helm-gtags-pulse-at-cursor t
+          helm-gtags-prefix-key "\C-cg"
+          helm-gtags-suggested-key-mapping t)
+
+    ;; Enable helm-gtags-mode in Dired so you can jump to any tag
+    ;; when navigate project tree with Dired
+    (add-hook 'dired-mode-hook 'helm-gtags-mode)
+
+    ;; Enable helm-gtags-mode in Eshell for the same reason as above
+    (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+
+    ;; Enable helm-gtags-mode in languages that GNU Global supports
+    (add-hook 'c-mode-hook 'helm-gtags-mode)
+    (add-hook 'c++-mode-hook 'helm-gtags-mode)
+    (add-hook 'java-mode-hook 'helm-gtags-mode)
+    (add-hook 'asm-mode-hook 'helm-gtags-mode)
 
    (use-package yasnippet
                 :ensure t
@@ -198,6 +221,7 @@ asd
       ("C-S-a" . beginning-of-defun)
       ("C-S-e" . end-of-defun)
       ("C-p" . find-file-in-repository)
+      ("C-S-p" . xah-copy-file-path)
       ("M-<left>" . tabbar-backward-tab)
       ("M-<right>" . tabbar-forward-tab)
       ("<C-backspace>" . delete-word)
@@ -206,7 +230,17 @@ asd
       ("M-<down>" . move-line-down)
       ("M--" . previous-buffer)
       ("<f6>" . kill-other-buffers)
-      ("<f5>" . revert-buffer-no-confirm)))
+      ("<f5>" . revert-buffer-no-confirm)
+      ("M-." . helm-gtags-dwim)
+      ("C-M-." . helm-gtags-find-tag)
+      ("M-," . helm-gtags-pop-stack)
+      ("C-c g a" . helm-gtags-tags-in-this-function)
+      ("C-S-." . helm-gtags-find-rtag)
+      ("C-c <" . helm-gtags-previous-history)
+      ("C-c >" . helm-gtags-next-history)
+      ("C-j" . helm-gtags-tags-in-this-function)
+      ("C-c u" . helm-gtags-update-tags)
+    ))
   (defun super-emacs-apply-keyboard-bindings (pair)
     "Apply keyboard-bindings for supplied list of key-pair values"
     (global-set-key (kbd (car pair))
@@ -383,6 +417,52 @@ asd
                  (window-configuration-to-register '_)
                  (delete-other-windows))))
 
+  (defun xah-copy-file-path (&optional @dir-path-only-p)
+      "Copy the current buffer's file path or dired path to `kill-ring'.
+  Result is full path.
+  If `universal-argument' is called first, copy only the dir path.
+
+  If in dired, copy the file/dir cursor is on, or marked files.
+
+  If a buffer is not file and not dired, copy value of `default-directory' (which is usually the “current” dir when that buffer was created)
+
+  URL `http://ergoemacs.org/emacs/emacs_copy_file_path.html'
+  Version 2017-09-01"
+      (interactive "P")
+      (let (($fpath
+             (if (string-equal major-mode 'dired-mode)
+                     (progn
+                         (let (($result (mapconcat 'identity (dired-get-marked-files) "\n")))
+                             (if (equal (length $result) 0)
+                                     (progn default-directory )
+                                 (progn $result))))
+                 (if (buffer-file-name)
+                         (buffer-file-name)
+                     (expand-file-name default-directory)))))
+          (kill-new
+           (if @dir-path-only-p
+                   (progn
+                       (message "Directory path copied: 「%s」" (file-name-directory $fpath))
+                       (file-name-directory $fpath))
+               (progn
+                   (message "File path copied: 「%s」" $fpath)
+                   $fpath )))))
+
+
+  (require 'linum)
+  (defun linum-update-window-scale-fix (win)
+      "fix linum for scaled text"
+      (set-window-margins win
+                          (ceiling (* (if (boundp 'text-scale-mode-step)
+                                              (expt text-scale-mode-step
+                                                    text-scale-mode-amount) 1)
+                                      (if (car (window-margins))
+                                              (car (window-margins)) 1)
+                                      ))))
+  (advice-add #'linum-update-window :after #'linum-update-window-scale-fix)
+
+
+
 #+END_SRC
 
 
@@ -442,6 +522,27 @@ LaTeX specific configuration.
    )
 #+END_SRC
 
+
+* Dot crap
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ (quote org-babel-load-languages)
+ (quote ((emacs-lisp . t)
+         (java . t)
+         (dot . t)
+         (ditaa . t)
+         (R . t)
+         (python . t)
+         (ruby . t)
+         (gnuplot . t)
+         (clojure . t)
+         (sh . t)
+         (ledger . t)
+         (org . t)
+         (plantuml . t)
+         (latex . t))))
+#+END_SRC
 
 * Org-mode configuration
 
