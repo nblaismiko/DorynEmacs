@@ -20,9 +20,12 @@ The packages that this configuration uses are the following :
     '(use-package
        helm
        helm-gtags
+       xcscope
+       wgrep
        org
        use-package
        magit
+       iedit
        auctex
        auctex-latexmk
        yasnippet
@@ -163,6 +166,9 @@ The packages that this configuration uses are the following :
    ;; smart tabs language configuration
    (smart-tabs-insinuate 'c 'c++ 'java 'javascript 'cperl 'python 'ruby 'nxml)
 
+    (cscope-setup)
+
+
 #+END_SRC
 
 
@@ -240,6 +246,7 @@ asd
       ("C-c >" . helm-gtags-next-history)
       ("C-j" . helm-gtags-tags-in-this-function)
       ("C-c u" . helm-gtags-update-tags)
+      ("C-`" . iedit-dwim)
     ))
   (defun super-emacs-apply-keyboard-bindings (pair)
     "Apply keyboard-bindings for supplied list of key-pair values"
@@ -461,6 +468,21 @@ asd
                                       ))))
   (advice-add #'linum-update-window :after #'linum-update-window-scale-fix)
 
+  (defun iedit-dwim (arg)
+      "Starts iedit but uses \\[narrow-to-defun] to limit its scope."
+      (interactive "P")
+      (if arg
+              (iedit-mode)
+          (save-excursion
+              (save-restriction
+                  (widen)
+                  ;; this function determines the scope of `iedit-start'.
+                  (if iedit-mode
+                          (iedit-done)
+                      ;; `current-word' can of course be replaced by other
+                      ;; functions.
+                      (narrow-to-defun)
+                      (iedit-start (current-word) (point-min) (point-max)))))))
 
 
 #+END_SRC
