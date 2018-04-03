@@ -23,3 +23,4 @@
 
 ;; Input my org init file here
 (org-babel-load-file (expand-file-name "~/.emacs.d/myinit.org"))
+(put 'downcase-region 'disabled nil)

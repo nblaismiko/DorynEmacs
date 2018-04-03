@@ -14,6 +14,11 @@ The packages that this configuration uses are the following :
 
 
 #+Begin_SRC emacs-lisp
+;; Tell emacs where is your personal elisp lib dir
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+
+;; load the packaged named xyz.
+(load "p4-mode") ;; best not to include the ending “.el” or “.elc”
   (when (not package-archive-contents)
     (package-refresh-contents))
   (defvar required-packages
@@ -178,15 +183,16 @@ The packages that this configuration uses are the following :
 By default, the monokai theme is used.
 
 #+BEGIN_SRC emacs-lisp
-(setq frame-title-format
-      "emacs")
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(load-theme 'monokai
-            t)
-(custom-set-faces
- '(default ((t (:height 120)))))
+  (setq frame-title-format
+        "emacs")
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (load-theme 'monokai
+              t)
+  (custom-set-faces
+   '(default ((t (:height 120)))))
+  (set-default-font "DejaVu Sans Mono-15")
 #+END_SRC
 
 
@@ -523,6 +529,9 @@ LaTeX specific configuration.
   (setq-default TeX-master nil)
   ;; Make LaTeX-mode the default mode when opening .tex files.
   (add-to-list 'auto-mode-alist '("\\.tex$" . LaTeX-mode))
+
+  ;; Make p4_16-mode the default for .p4 files.
+  (add-to-list 'auto-mode-alist '("\\.p4" . p4_16-mode))
 
   ;; Code snippet I copied to have pdf viewer Okular integrated to emacs.
   (custom-set-variables
